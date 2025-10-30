@@ -1,0 +1,34 @@
+{
+  "image": {
+    "checks": [
+      "Ensure visuals reflect IT innovation, security, and business productivity.",
+      "Confirm representation is professional, inclusive, and brand-safe.",
+      "Verify high resolution, proper logo usage, and color consistency with brand.",
+      "Check overlay text for clarity, correctness, and aligned value messaging."
+    ]
+  },
+  "video": {
+    "checks": [
+      "Ensure visuals support transformation, growth, and partnership messaging.",
+      "Verify narration and captions are clear, accurate, and aligned to brand tone.",
+      "Check branding consistency each frame: logo placement, colors, and messaging.",
+      "Confirm claims are factual, customer-friendly, and do not overpromise."
+    ]
+  },
+  "ppt": {
+    "checks": [
+      "Check slide readability, proper whitespace, and simplified messaging.",
+      "Verify images and graphics are sharp, aligned, and professionally styled.",
+      "Ensure consistent fonts, layout, color palette, and brand identity.",
+      "Validate business claims, certifications, and partner logos for accuracy."
+    ]
+  },
+  "text": {
+    "checks": [
+      "Grammar, spelling, and sentence clarity must be perfect.",
+      "Tone must be confident, consultative, professional — NOT overly technical.",
+      "All claims must be truthful, verifiable, and compliant with policy.",
+      "Ensure concise structure with benefits-focused messaging and clear CTAs."
+    ]
+  }
+}

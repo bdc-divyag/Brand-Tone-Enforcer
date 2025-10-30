@@ -1,0 +1,12 @@
+openai==1.58.1
+gradio==4.44.0
+huggingface_hub==0.21.4
+pytesseract
+opencv-python
+moviepy
+python-pptx
+pydantic
+Pillow
+pypdf2
+pydub
+ffmpeg-python

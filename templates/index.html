@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Tone Enforcer - AI Critic Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-label {
+            display: block;
+            padding: 15px 20px;
+            background: #f0f4f8;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-upload {
+            position: relative;
+            display: none;
+        }
+
+        .file-upload.active {
+            display: block;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f0f4f8;
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .file-input-label:hover {
+            background: #e6f2ff;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e6f2ff;
+            border-radius: 5px;
+            color: #2a5298;
+            font-size: 14px;
+            display: none;
+        }
+
+        .file-name.show {
+            display: block;
+        }
+
+        .text-input {
+            display: none;
+        }
+
+        .text-input.active {
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #667eea;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-section h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .result-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .result-section li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .result-section li:last-child {
+            border-bottom: none;
+        }
+
+        .result-section li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            margin-right: 10px;
+        }
+
+        .slide-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .error {
+            display: none;
+            padding: 15px;
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 10px;
+            color: #c33;
+            margin-top: 20px;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+           
+            <h1>
+                <span>🔍</span>
+                Brand Tone Enforcer
+            </h1>
+            
+        </div>
+
+        <div class="content">
+            <form id="analyzeForm">
+                <div class="form-group">
+                    <label>Select Input Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="input_type" value="image" id="type_image">
+                            <label for="type_image" class="radio-label">🖼️ Image</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="input_type" value="video" id="type_video">
+                            <label for="type_video" class="radio-label">🎥 Video</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="input_type" value="ppt" id="type_ppt">
+                            <label for="type_ppt" class="radio-label">📊 PPT</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="input_type" value="text" id="type_text" checked>
+                            <label for="type_text" class="radio-label">📝 Text</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group file-upload" id="fileUpload">
+                    <label>Upload File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="file" id="fileInput" accept="*/*">
+                        <label for="fileInput" class="file-input-label">
+                            <span>📁</span>
+                            <span>Choose a file or drag it here</span>
+                        </label>
+                    </div>
+                    <div class="file-name" id="fileName"></div>
+                </div>
+
+                <div class="form-group text-input active" id="textInput">
+                    <label>Enter Text to Analyze</label>
+                    <textarea name="text_input" id="textArea" placeholder="Paste your content here..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    Analyze Content
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing your content...</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('analyzeForm');
+        const fileUpload = document.getElementById('fileUpload');
+        const textInput = document.getElementById('textInput');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const error = document.getElementById('error');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Handle input type change
+        document.querySelectorAll('input[name="input_type"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'text') {
+                    fileUpload.classList.remove('active');
+                    textInput.classList.add('active');
+                } else {
+                    fileUpload.classList.add('active');
+                    textInput.classList.remove('active');
+                }
+            });
+        });
+
+        // Handle file selection
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileName.textContent = `Selected: ${e.target.files[0].name}`;
+                fileName.classList.add('show');
+            } else {
+                fileName.classList.remove('show');
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const inputType = formData.get('input_type');
+            
+            // Validate input
+            if (inputType === 'text' && !formData.get('text_input').trim()) {
+                showError('Please enter some text to analyze');
+                return;
+            }
+            
+            if (inputType !== 'text' && !formData.get('file')) {
+                showError('Please upload a file');
+                return;
+            }
+
+            // Show loading
+            loading.classList.add('show');
+            results.classList.remove('show');
+            error.classList.remove('show');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResults(data.data, inputType);
+                } else {
+                    showError(data.error || 'An error occurred during analysis');
+                }
+            } catch (err) {
+                showError('Failed to connect to the server');
+            } finally {
+                loading.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data, inputType) {
+            let html = '';
+
+            if (inputType === 'ppt' && data.slides) {
+                data.slides.forEach(slide => {
+                    html += `
+                        <div class="result-section">
+                            <div class="slide-header">🖼️ Slide ${slide.slide}</div>
+                            <h3>❌ Problems:</h3>
+                            <ul>
+                                ${slide.problems.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                            <h3>✅ Fixes:</h3>
+                            <ul>
+                                ${slide.fixes.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            } else {
+                html = `
+                    <div class="result-section">
+                        <h3>❌ Problems:</h3>
+                        <ul>
+                            ${data.problems.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="result-section">
+                        <h3>✅ Fixes:</h3>
+                        <ul>
+                            ${data.fixes.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            results.innerHTML = html;
+            results.classList.add('show');
+            results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.classList.add('show');
+            setTimeout(() => {
+                error.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
