@@ -11,3 +11,4 @@ pypdf2
 pydub
 google.generativeai
 ffmpeg-python
+easyocr
