@@ -108,7 +108,7 @@ You are an AI Brand Compliance Critic. Your job is to critically evaluate whethe
         validated = parse_output(text_resp)
         return {"problems": validated.problems, "fixes": validated.fixes}
 
-    elif input_type == "Image":
+    elif input_type == "image":
         prompt = f"""
 You are an AI Brand Compliance Critic. Your job is to critically evaluate whether the provided content aligns with the company's branding, tone, messaging, and compliance rules.
 
@@ -184,7 +184,7 @@ You are an AI Brand Compliance Critic. Your job is to critically evaluate whethe
         validated = parse_output(text_resp)
         return {"problems": validated.problems, "fixes": validated.fixes}
 
-    elif input_type == "PPT":
+    elif input_type == "ppt":
         slide_results = []
         slide_counter = 1
         for slide_text, slide_img in images:
